@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace ServlessFunctions.PluralSight;
@@ -17,14 +18,23 @@ public static class TodoApi
    [FunctionName("CreateTodo")]
    public static async Task<IActionResult> CreateTodo(
       [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "todo")]
-      HttpRequest req, TraceWriter log)
+      HttpRequest req, ILogger log)
    {
-      log.Info("Creating a new Todo list item");
-      string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+      log.LogInformation("Creating a new Todo list item");
+      var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
       var input = JsonConvert.DeserializeObject<TodoCreateModel>(requestBody);
 
       var todo = new Todo { TaskDescription = input.TaskDescription };
       items.Add(todo);
       return new OkObjectResult(todo);
+   }
+
+   [FunctionName("GetTodos")]
+   public static IActionResult GetTodos(
+      [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "todo")]
+      HttpRequest req, ILogger log)
+   {
+      log.LogInformation("Getting Todo list items");
+      return new OkObjectResult(items);
    }
 }
