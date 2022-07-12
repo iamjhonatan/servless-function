@@ -50,4 +50,23 @@ public static class TodoApi
 
       return new OkObjectResult(todo);
    }
+   
+   [FunctionName("UpdateTodo")]
+   public static async Task<IActionResult> UpdateTodo(
+      [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "todo/{id}")]
+      HttpRequest req, ILogger log, string id)
+   {
+      var todo = items.FirstOrDefault(t => t.Id == id);
+      if (todo is null)
+         return new NotFoundResult();
+
+      var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+      var updated = JsonConvert.DeserializeObject<TodoUpdateModel>(requestBody);
+
+      todo.IsCompleted = updated.IsCompleted;
+      if (!string.IsNullOrEmpty(updated.TaskDescription))
+         todo.TaskDescription = updated.TaskDescription;
+
+      return new OkObjectResult(todo);
+   }
 }
