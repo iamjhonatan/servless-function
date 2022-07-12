@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,5 +37,17 @@ public static class TodoApi
    {
       log.LogInformation("Getting Todo list items");
       return new OkObjectResult(items);
+   }
+
+   [FunctionName("GetTodoById")]
+   public static IActionResult GetTodoById(
+      [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "todo/{id}")]
+      HttpRequest req, ILogger log, string id)
+   {
+      var todo = items.FirstOrDefault(t => t.Id == id);
+      if (todo is null) 
+         return new NotFoundResult();
+
+      return new OkObjectResult(todo);
    }
 }
