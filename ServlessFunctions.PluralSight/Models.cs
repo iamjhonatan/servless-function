@@ -1,5 +1,7 @@
 using System;
+using Azure;
 using Microsoft.WindowsAzure.Storage.Table;
+using ITableEntity = Azure.Data.Tables.ITableEntity;
 
 namespace ServlessFunctions.PluralSight;
 
@@ -22,11 +24,19 @@ public class TodoUpdateModel
     public bool IsCompleted { get; set; }
 }
 
-public class TodoTableEntity : TableEntity
+public class TodoTableEntity : BaseTableEntity
 {
     public DateTime CreatedAt { get; set; }
     public string TaskDescription { get; set; }
     public bool IsCompleted { get; set; }
+}
+
+public class BaseTableEntity : ITableEntity
+{
+    public string PartitionKey { get; set; }
+    public string RowKey { get; set; }
+    public DateTimeOffset? Timestamp { get; set; }
+    public ETag ETag { get; set; }
 }
 
 public static class Mappings
