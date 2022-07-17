@@ -6,21 +6,24 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace ServlessFunctions.PluralSight;
 
+
+// Function with packages deprecated
 public static class ScheduledFunction
 {
     [FunctionName("ScheduledFunction")]
-    public static async Task RunAsync([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer,
-        [Table("todos", Connection = "AzureWebJobsStorage")] CloudTable todoTable, ILogger log)
+    public static async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer,
+        [Table("todos", Connection = "AzureWebJobsStorage")] CloudTable todoTable,
+        ILogger log)
     {
-        var query = new TableQuery<TodoTableEntity>();
+        var query = new TableQuery();
         var segment = await todoTable.ExecuteQuerySegmentedAsync(query, null);
         var deleted = 0;
-
+        
         foreach (var todo in segment)
         {
-            if (todo.IsCompleted)
+            //if (todo.IsCompleted)
             {
-                await todoTable.ExecuteQuerySegmentedAsync(TableOperation.Delete(todo));
+                await todoTable.ExecuteAsync(TableOperation.Delete(todo));
                 deleted++;
             }
         }
