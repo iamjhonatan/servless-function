@@ -17,7 +17,8 @@ public static class TodoApi
    [FunctionName("CreateTodo")]
    public static async Task<IActionResult> CreateTodo(
       [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "todo")] HttpRequest req,
-      [Table("todos", Connection = "AzureWebJobsStorage")] IAsyncCollector<TodoTableEntity> todoTable, ILogger log)
+      [Table("todos", Connection = "AzureWebJobsStorage")] IAsyncCollector<TodoTableEntity> todoTable, 
+      [Queue("todos", Connection = "AzureWebJobsStorage")] IAsyncCollector<Todo> todoQueue, ILogger log)
    {
       log.LogInformation("Creating a new Todo list item");
       
@@ -26,6 +27,7 @@ public static class TodoApi
       var todo = new Todo { TaskDescription = input.TaskDescription };
       
       await todoTable.AddAsync(todo.ToTableEntity());
+      await todoQueue.AddAsync(todo);
       
       return new OkObjectResult(todo);
    }
