@@ -10,6 +10,8 @@ namespace ServlessFunctions.PluralSight;
 // Function with packages deprecated
 public static class ScheduledFunction
 {
+    // TODO: adjust function to new packages
+    
     [FunctionName("ScheduledFunction")]
     public static async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer,
         [Table("todos", Connection = "AzureWebJobsStorage")] CloudTable todoTable,

@@ -7,6 +7,8 @@ namespace ServlessFunctions.PluralSight;
     
 public static class QueueListeners
 {
+    // TODO: adjust function to new packages
+    
     [FunctionName("QueueListeners")]
     public static async Task Run([QueueTrigger("todos", Connection = "AzureWebJobsStorage")]Todo todo,
         [Blob("todos", Connection = "AzureWebJobsStorage")]CloudBlobContainer container,
